@@ -6,7 +6,7 @@ import subprocess
 import torch
 import wave
 
-import pyannote.audio #pip install pyannote.audio==2.1.1 | pip install speechbrain
+import pyannote.audio #pip install pyannote.audio==2.1.1 | pip install speechbrain | pip install git+https://github.com/speechbrain/speechbrain.git@develop
 from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
 embedding_model = PretrainedSpeakerEmbedding(
     "speechbrain/spkrec-ecapa-voxceleb",
