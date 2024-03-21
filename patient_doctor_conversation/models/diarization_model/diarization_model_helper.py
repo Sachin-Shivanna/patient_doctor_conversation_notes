@@ -4,6 +4,11 @@ import wave
 import torch
 from pyannote.core import Segment
 from pyannote.audio import Audio
+from pyannote.audio import Pipeline
+pipeline = Pipeline.from_pretrained(
+    "pyannote/speaker-diarization-3.1",
+    use_auth_token="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")
+pipeline.to(torch.device("cuda"))
 from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
 embedding_model = PretrainedSpeakerEmbedding(
     "speechbrain/spkrec-ecapa-voxceleb",
@@ -39,4 +44,7 @@ def segment_embedding(segment,duration,path):
   end = min(duration, segment["end"])
   clip = Segment(start, end)
   waveform, sample_rate = audio.crop(path, clip)
-  return embedding_model(waveform[None])
+  print('waveform>>>>>>')
+  print(waveform)
+  print(waveform[None])
+  #return embedding_model(waveform[None])

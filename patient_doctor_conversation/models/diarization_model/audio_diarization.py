@@ -46,6 +46,3 @@ for segmentList in segments:
     embeddings[i] = segment_embedding(segment,duration,path)
   embeddings = np.nan_to_num(embeddings)
   embeddingsDict[segmentPath] = embeddings
-
-print(audioFrameRateDict)
-print(segments)
