@@ -1,6 +1,13 @@
 import os
 import contextlib
 import wave
+import torch
+from pyannote.core import Segment
+from pyannote.audio import Audio
+from pyannote.audio.pipelines.speaker_verification import PretrainedSpeakerEmbedding
+embedding_model = PretrainedSpeakerEmbedding(
+    "speechbrain/spkrec-ecapa-voxceleb",
+    device=torch.device("cuda"))
 
 def getAllFiles():
     audioFilesDict = {}
@@ -24,3 +31,12 @@ def get_audio_frame_rate(audio_file_dict,model):
     with contextlib.closing(wave.open(filePath,'r')) as f:
       audioFrameRateDict[filePath] = {'frames':f.getnframes(), 'rate':f.getframerate(), 'duration':f.getnframes() / float(f.getframerate())}
   return {'segments' : segments, 'audioFrameRateDict' : audioFrameRateDict}
+
+def segment_embedding(segment,duration,path):
+  audio = Audio(sample_rate=16000, mono="downmix")
+  start = segment["start"]
+  # Whisper overshoots the end timestamp in the last segment
+  end = min(duration, segment["end"])
+  clip = Segment(start, end)
+  waveform, sample_rate = audio.crop(path, clip)
+  return embedding_model(waveform[None])
