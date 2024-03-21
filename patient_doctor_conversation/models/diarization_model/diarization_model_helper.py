@@ -1,5 +1,6 @@
 import os
 import contextlib
+import wave
 
 def getAllFiles():
     audioFilesDict = {}
@@ -12,7 +13,7 @@ def getAllFiles():
     print(audioFilesDict)
     return audioFilesDict
 
-def get_audio_frame_rate(audio_file_dict):
+def get_audio_frame_rate(audio_file_dict,model):
   audioFrameRateDict = {}
   segments = []
   for filePath in audio_file_dict.keys():

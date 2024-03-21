@@ -32,7 +32,7 @@ filesDict = getAllFiles()
 
 model = whisper.load_model(model_size)
 
-segments_frame_rate_dict = get_audio_frame_rate(filesDict)
+segments_frame_rate_dict = get_audio_frame_rate(filesDict, model)
 
 audioFrameRateDict = segments_frame_rate_dict['audioFrameRateDict']
 
