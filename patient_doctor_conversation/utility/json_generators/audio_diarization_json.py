@@ -1,6 +1,7 @@
 import json
 import os
-from datetime import datetime
+from datetime import date
+import calendar
 
 class audio_diarization_json:
     def __init__(self, clinicName, accountID, patientID, patientName, conversation_directory,doctor_incharge, visit_details = {}):
@@ -13,7 +14,18 @@ class audio_diarization_json:
         self.visit_details = visit_details
 
     def construct_json(self):
-        file_loc = 'diarization_files/'+datetime.today().year+'/'+self.accountID+'.json'
+        
+        # Get the current date
+        current_date = date.today()
+
+        # Extract year, month, and day
+        current_year = current_date.year
+        current_month = current_date.month
+
+        # Get the month name
+        current_month_name = calendar.month_name[current_month]
+
+        file_loc = 'diarization_files/'+current_year+'/'+current_month_name+'/'+current_date+'/'+self.accountID+'.json'
         if os.path.isfile(file_loc) is False:
             json_object =  json.dumps(
                         {
