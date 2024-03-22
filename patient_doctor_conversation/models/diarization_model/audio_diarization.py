@@ -1,3 +1,10 @@
+from pyannote.audio import Pipeline
+pipeline = Pipeline.from_pretrained(
+    "pyannote/speaker-diarization-3.1",
+    use_auth_token="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")
+import torch
+pipeline.to(torch.device("cuda"))
+
 import whisper #pip install openai-whisper
 from pyannote.audio import Audio #pip install pyannote.audio
 from pyannote.audio import Model
@@ -7,6 +14,8 @@ from diarization_model_helper import getAllFiles
 from diarization_model_helper import get_segment_framerate
 from diarization_model_helper import segment_embedding
 from diarization_model_helper import assign_sepaker
+
+pipeline
 
 class audio_diarization:
     
@@ -42,3 +51,5 @@ class audio_diarization:
         pathSegmentListDict[list(segment)[-1]] = segmentList
     
     pathSegmentListDict = assign_sepaker(embeddingsDict, pathSegmentListDict)
+
+    print(pathSegmentListDict)
