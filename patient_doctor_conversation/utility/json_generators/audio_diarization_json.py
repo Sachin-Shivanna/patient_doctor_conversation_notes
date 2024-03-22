@@ -13,7 +13,8 @@ class audio_diarization_json:
         self.visit_details = visit_details
 
     def construct_json(self):
-        if os.path.isfile('diarization_files/'+datetime.today().year+'/'+self.accountID) is False:
+        file_loc = 'diarization_files/'+datetime.today().year+'/'+self.accountID+'.json'
+        if os.path.isfile(file_loc) is False:
             json_object =  json.dumps(
                         {
                 "clinicName": self.clinicName,
@@ -26,6 +27,7 @@ class audio_diarization_json:
                         {
                         "date": self.visit_details["date"],
                         "report_generated" : False,
+                        "doctor_incharge" : self.doctor_incharge,
                         "data": {
                             "weight": self.visit_details["weight"],
                             "bloodPressure": self.visit_details["bloodPressure"],
@@ -38,17 +40,62 @@ class audio_diarization_json:
                 }, indent=2
             )
 
-            with open('diarization_files/'+datetime.today().year+'/'+self.accountID, "w") as outfile:
+            with open(file_loc, "w") as outfile:
              outfile.write(json_object)
         else:
-            new_visit = {
-                {
+
+            def find_patient_by_id(clinic_data, patient_id):
+                for patient in clinic_data['patients']:
+                    if patient['patientID'] == patient_id:
+                        return patient
+                return None  # Return None if no patient found
+
+            # Read the original JSON data
+            with open(file_loc, 'r') as file:
+                clinic_data = json.load(file)
+            
+            patient = find_patient_by_id(clinic_data, self.patientID)
+
+            if patient:
+                new_visit = {
+                    {
                         "date": self.visit_details["date"],
                         "report_generated" : False,
+                        "doctor_incharge" : self.doctor_incharge,
+                        "data": {
+                            "weight": self.visit_details["weight"],
+                            "bloodPressure": self.visit_details["bloodPressure"],
+                            "temperature": self.visit_details["temperature"]
+                            }
+                        }
+                }
+                patient['visits'].append(new_visit)
+
+                # Write the updated JSON back to the file
+                with open(file_loc, 'w') as file:
+                    json.dump(clinic_data, file, indent=2)
+
+            else:
+                new_patient = {
+                    "patientID": self.patientID,
+                    "name": self.patientName,
+                    "visits": [
+                        {
+                        "date": self.visit_details["date"],
+                        "report_generated" : False,
+                        "doctor_incharge" : self.doctor_incharge,
                         "data": {
                             "weight": self.visit_details["weight"],
                             "bloodPressure": self.visit_details["bloodPressure"],
                             "temperature": self.visit_details["temperature"]
                         }
                         }
-            }
+                    ]
+                    }
+                
+                clinic_data['patients'].append(new_patient)
+                # Write the updated JSON back to the file
+                with open(file_loc, 'w') as file:
+                    json.dump(clinic_data, file, indent=2)
+
+            
