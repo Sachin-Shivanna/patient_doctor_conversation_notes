@@ -1,48 +1,44 @@
-import json
+import whisper #pip install openai-whisper
+from pyannote.audio import Audio #pip install pyannote.audio
+from pyannote.audio import Model
 import numpy as np
-import whisper #pip install git+https://github.com/openai/whisper.git 
-import datetime
-import subprocess
-
-import pyannote.audio #pip install pyannote.audio==2.1.1 | pip install speechbrain | pip install git+https://github.com/speechbrain/speechbrain.git@develop
-
-
-
-from sklearn.cluster import AgglomerativeClustering
 
 from diarization_model_helper import getAllFiles
-from diarization_model_helper import get_audio_frame_rate
+from diarization_model_helper import get_segment_framerate
 from diarization_model_helper import segment_embedding
+from diarization_model_helper import assign_sepaker
 
-segments = []
-audioFrameRateDict = {}
-num_speakers = 2 #@param {type:"integer"}
-language = 'English' #@param ['any', 'English']
-model_size = 'large' #@param ['tiny', 'base', 'small', 'medium', 'large']
-model_name = model_size
-if language == 'English' and model_size != 'large':
-  model_name += '.en'
+class audio_diarization:
+    
+    segments = []
+    audioFrameRateDict = {}
+    embeddingsDict = {}
+    pathSegmentListDict={}
 
-filesDict = getAllFiles()
+    filesDict = getAllFiles()
 
-model = whisper.load_model(model_size)
+    model = whisper.load_model('base')
 
-segments_frame_rate_dict = get_audio_frame_rate(filesDict, model)
+    segments,audioFrameRateDict = get_segment_framerate(filesDict,model)
 
-audioFrameRateDict = segments_frame_rate_dict['audioFrameRateDict']
+    audio = Audio(sample_rate=16000, mono="downmix")
 
-segments = segments_frame_rate_dict['segments']
+    embedding_model = Model.from_pretrained("pyannote/wespeaker-voxceleb-resnet34-LM")
 
-embeddingsDict = {}
-for segmentList in segments:
-  segmentPath = ""
-  embeddings = np.zeros(shape=(len(segmentList), 192))
-  for i, segment in enumerate(segmentList):
-    path,fileName = list(segment.items())[-1]
-    duration = audioFrameRateDict[path]["duration"]
-    segmentPath = path
-    print(path)
-    print(embeddings)
-    embeddings[i] = segment_embedding(segment,duration,path)
-  embeddings = np.nan_to_num(embeddings)
-  embeddingsDict[segmentPath] = embeddings
+    for segmentList in segments:
+      segmentPath = ""
+      embeddings = np.zeros(shape=(len(segmentList), 256))
+      for i, segment in enumerate(segmentList):
+        path,fileName = list(segment.items())[-1]
+        duration = audioFrameRateDict[path]["duration"]
+        segmentPath = path
+        #print(embeddings)
+        embeddings[i] = segment_embedding(segment,duration,path,embedding_model,audio)
+      embeddings = np.nan_to_num(embeddings)
+      embeddingsDict[segmentPath] = embeddings
+
+    for segmentList in segments:
+      for i, segment in enumerate(segmentList):
+        pathSegmentListDict[list(segment)[-1]] = segmentList
+    
+    pathSegmentListDict = assign_sepaker(embeddingsDict, pathSegmentListDict)
