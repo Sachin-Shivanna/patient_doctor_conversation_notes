@@ -16,6 +16,12 @@ def handle_form_submission():
         
 
     patient_id = request.form['patient_id']
+    clinic_name = request.form['clinic_name']
+    patient_name = request.form['patient_name']
+    weight = request.form['weight']
+    bloodPressure = request.form['bloodPressure']
+    temperature = request.form['temperature']
+    doctor_incharge = request.form['doctor_incharge']
     account_id = request.form['account_id']
     file_dir = 'audio_files' + "/" + account_id + "/" + patient_id + "/" + date.today().strftime("%Y-%m-%d")
     file_name = datetime.now().strftime("%H:%M:%S") + ".wav"

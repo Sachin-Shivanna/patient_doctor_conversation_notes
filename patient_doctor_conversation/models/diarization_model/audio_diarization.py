@@ -9,7 +9,7 @@ import whisper #pip install openai-whisper
 from pyannote.audio import Audio #pip install pyannote.audio
 from pyannote.audio import Model
 import numpy as np
-
+import json
 from diarization_model_helper import getAllFiles
 from diarization_model_helper import get_segment_framerate
 from diarization_model_helper import segment_embedding
@@ -53,4 +53,4 @@ class audio_diarization:
     #print('length >>> ',len(embeddingsDict.keys()))
     pathSegmentListDict = assign_sepaker(embeddingsDict, pathSegmentListDict)
 
-    print(pathSegmentListDict)
+    print(json.dumps(pathSegmentListDict))
