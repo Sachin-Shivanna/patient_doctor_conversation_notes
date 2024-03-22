@@ -50,6 +50,7 @@ class audio_diarization:
       for i, segment in enumerate(segmentList):
         pathSegmentListDict[list(segment)[-1]] = segmentList
     
+    #print('length >>> ',len(embeddingsDict.keys()))
     pathSegmentListDict = assign_sepaker(embeddingsDict, pathSegmentListDict)
 
     print(pathSegmentListDict)

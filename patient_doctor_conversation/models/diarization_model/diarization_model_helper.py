@@ -56,6 +56,6 @@ def assign_sepaker(embeddingsDict, pathSegmentListDict):
       for i in range(len(pathSegmentListDict[path])):
         last_underscore_index = pathSegmentListDict[path][i][path].rfind("_")
         dot_index = pathSegmentListDict[path][i][path].rfind(".")
-        pathSegmentListDict[path][i]["speaker"] = 'SPEAKER ' + str(labels[i] + 1)
+        pathSegmentListDict[path][i]["speaker"] = 'SPEAKER ' + str(labels[i])
         pathSegmentListDict[path][i]["dateTime"] = pathSegmentListDict[path][i][path][last_underscore_index + 1:dot_index]
-    return pathSegmentListDict
+   return pathSegmentListDict
