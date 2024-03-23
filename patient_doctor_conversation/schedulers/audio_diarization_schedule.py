@@ -14,17 +14,24 @@ queue = Queue(connection=redis_conn)
 # Set up the scheduler
 scheduler = BlockingScheduler()
 
-filesDictToProcess = getAllFiles()
-
 def queue_job():
-    # Create an instance of your class
-    audio_diarization_job = audio_diarization(filesDictToProcess)
-    # This adds the job's run method to the RQ queue
-    print("Adding a job to the queue.")
-    queue.enqueue(audio_diarization_job.run)
 
-# Add the job to the APScheduler (for example, to run every 10 seconds)
-scheduler.add_job(queue_job, 'interval', seconds=10)
+    structured_audio_files_list = getAllFiles()
+
+    diarization_job = []
+    for arg_dict in structured_audio_files_list:
+        audio_diarization_instance = audio_diarization(**arg_dict)
+        job = queue.enqueue(audio_diarization_instance.run)
+        diarization_job.append(job)
+        
+    # Enqueue second set of jobs, each depending on the corresponding first job
+    '''for i, arg_dict in enumerate(second_job_args):
+        job_instance = MySecondJob(**arg_dict)
+        # Each second job depends on the corresponding first job
+        queue.enqueue(job_instance.run, depends_on=first_jobs[i])'''
+
+# Add the job to the APScheduler to run at the 45th minute of every hour
+scheduler.add_job(queue_job,  'cron', minute=45)
 
 
 # Start the scheduler

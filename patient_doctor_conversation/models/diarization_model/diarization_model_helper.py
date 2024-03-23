@@ -5,7 +5,7 @@ from pyannote.core import Segment
 from pyannote.audio import Inference
 from sklearn.cluster import AgglomerativeClustering
 
-def getAllFiles():
+'''def getAllFiles():
     audioFilesDict = {}
     directory = 'audio_files'
     for root, _, files in os.walk(directory):
@@ -14,7 +14,7 @@ def getAllFiles():
             file_name = os.path.basename(file_path)
             audioFilesDict[file_path] = file
 
-    return audioFilesDict
+    return audioFilesDict'''
 
 def get_segment_framerate(filesDict, model):
     segments = []
