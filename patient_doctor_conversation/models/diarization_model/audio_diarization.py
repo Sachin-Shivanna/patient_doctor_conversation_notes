@@ -10,10 +10,12 @@ from pyannote.audio import Audio #pip install pyannote.audio
 from pyannote.audio import Model
 import numpy as np
 import json
+
 from diarization_model_helper import getAllFiles
 from diarization_model_helper import get_segment_framerate
 from diarization_model_helper import segment_embedding
 from diarization_model_helper import assign_sepaker
+from utility.json_generators.audio_diarization_json import audio_diarization_json
 
 pipeline
 
@@ -54,3 +56,5 @@ class audio_diarization:
     pathSegmentListDict = assign_sepaker(embeddingsDict, pathSegmentListDict)
 
     print(json.dumps(pathSegmentListDict))
+
+    #Generate JSON from audio_diarization_json
